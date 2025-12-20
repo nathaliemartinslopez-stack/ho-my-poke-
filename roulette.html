@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roue de la Fortune - Oh My Poke</title>
+    <!-- Import d'une police "Florale/Manuscrite" -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-pink: #be185d;
+            --secondary-pink: #831843;
+            --light-pink: #fdf2f8;
+            --dark-pink: #500724;
+            --text-color: #333;
+            --gold: #d4af37;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light-pink);
+            background-image: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--dark-pink);
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .wheel-container {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            margin: 20px auto;
+            /* Ombre portée douce pour la profondeur */
+            filter: drop-shadow(0px 20px 30px rgba(0, 0, 0, 0.15));
+        }
+
+        /* La flèche / Le pointeur (Style feuille/pétale) */
+        .pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 50px;
+            clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+            z-index: 10;
+            background-color: var(--gold);
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 10px solid #fff;
+            position: relative;
+            overflow: hidden;
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); /* Effet de ralentissement réaliste */
+            background: #fff;
+        }
+
+        /* Les segments de la roue */
+        .segment {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 50%;
+            transform-origin: 0% 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+        /* Couleurs alternées pour les pétales */
+        .segment:nth-child(1) { background-color: #9d174d; transform: rotate(0deg) skewY(-18deg); }
+        .segment:nth-child(2) { background-color: #be185d; transform: rotate(72deg) skewY(-18deg); }
+        .segment:nth-child(3) { background-color: #9d174d; transform: rotate(144deg) skewY(-18deg); }
+        .segment:nth-child(4) { background-color: #be185d; transform: rotate(216deg) skewY(-18deg); }
+        .segment:nth-child(5) { background-color: #831843; transform: rotate(288deg) skewY(-18deg); }
+
+        /* Le texte à l'intérieur des segments */
+        .text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-origin: 0% 100%;
+            transform: skewY(18deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding-top: 60px;
+            text-align: center;
+            font-weight: 600;
+            color: #fff;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Le bouton central (Pistil de la fleur) */
+        .spin-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: #fff;
+            border-radius: 50%;
+            border: 4px solid var(--gold);
+            cursor: pointer;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--secondary-pink);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .spin-btn:active {
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+
+        /* Zone de résultat */
+        #result {
+            margin-top: 30px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--secondary-pink);
+            min-height: 40px;
+            text-align: center;
+            background: #fff;
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        #result.show {
+            opacity: 1;
+        }
+
+        /* Décoration florale CSS (Pétales autour du conteneur) */
+        .flower-bg {
+            position: absolute;
+            width: 120%;
+            height: 120%;
+            top: -10%;
+            left: -10%;
+            z-index: -1;
+            background: transparent;
+            border-radius: 50%;
+            border: 1px solid var(--gold);
+            opacity: 0.3;
+            animation: spin-slow 60s linear infinite;
+        }
+
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Styles du formulaire */
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 10px;
+            z-index: 20;
+        }
+        
+        .form-container input {
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+            color: var(--text-color);
+            font-weight: 500;
+            outline: none;
+            width: 280px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-container input:focus {
+            border-color: var(--primary-pink);
+        }
+
+        .form-container input::placeholder {
+            color: #9ca3af;
+            font-weight: 400;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Oh My Poke</h1>
+
+    <div class="form-container">
+        <input type="email" id="emailInput" placeholder="Votre Email 📧">
+        <input type="tel" id="phoneInput" placeholder="Votre Téléphone 📱">
+    </div>
+
+    <div class="wheel-container">
+        <div class="flower-bg"></div>
+        <div class="pointer"></div>
+        
+        <div class="wheel" id="wheel">
+            <!-- 
+               Calcul des segments : 360deg / 5 segments = 72deg par segment.
+               L'astuce CSS skewY est utilisée pour créer des parts de tarte parfaites.
+            -->
+            <div class="segment"><span class="text">Moshi</span></div>
+            <div class="segment"><span class="text">-10%</span></div>
+            <div class="segment"><span class="text">Surprise</span></div>
+            <div class="segment"><span class="text">Désolé !</span></div>
+            <div class="segment"><span class="text">Cookie</span></div>
+        </div>
+
+        <button class="spin-btn" id="spinBtn">Spin</button>
+    </div>
+
+    <div id="result">Bonne chance ! 🌸</div>
+
+    <script>
+        const wheel = document.getElementById('wheel');
+        const spinBtn = document.getElementById('spinBtn');
+        const resultDiv = document.getElementById('result');
+        const emailInput = document.getElementById('emailInput');
+        const phoneInput = document.getElementById('phoneInput');
+
+        // Les récompenses dans l'ordre inverse des aiguilles d'une montre (car la roue tourne en sens horaire)
+        // Ordre HTML : Moshi, -10%, Surprise, Désolé !, Cookie
+        // Correspondance Index : 0, 1, 2, 3, 4
+        // NOTE: Ce tableau n'est pas utilisé, mais une erreur de syntaxe ici bloquait le script.
+        const segments = [
+            "Moshi Offert", // Index 0
+            "Remise -10%",  // Index 1
+            "Surprise",     // Index 2
+            "Perdu",        // Index 3
+            "Cookie Offert" // Index 4
+        ];
+        
+        let currentRotation = 0;
+        let isSpinning = false;
+
+        spinBtn.addEventListener('click', () => {
+            if (isSpinning) return;
+
+            const email = emailInput.value.trim().toLowerCase();
+            // Nettoyage du numéro (suppression des espaces, points, tirets)
+            const phone = phoneInput.value.trim().replace(/[\s.-]/g, '');
+
+            // Regex de validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phoneRegex = /^0[1-9]\d{8}$/; // Format français standard (10 chiffres)
+
+            // 1. Validation des champs
+            if (!emailRegex.test(email)) {
+                resultDiv.textContent = "Adresse email invalide.";
+                resultDiv.classList.add('show');
+                return;
+            }
+            if (!phoneRegex.test(phone)) {
+                resultDiv.textContent = "Numéro de téléphone invalide (10 chiffres requis).";
+                resultDiv.classList.add('show');
+                return;
+            }
+
+            // 2. Vérification de l'historique (Anti-triche)
+            const usedEmails = JSON.parse(localStorage.getItem('omp_emails') || '[]');
+            const usedPhones = JSON.parse(localStorage.getItem('omp_phones') || '[]');
+
+            if (usedEmails.includes(email) || usedPhones.includes(phone)) {
+                resultDiv.textContent = "Vous avez déjà participé.";
+                // Pour tester à nouveau, videz le cache ou changez d'email
+                resultDiv.classList.add('show');
+                return;
+            }
+
+            isSpinning = true;
+            resultDiv.classList.remove('show');
+            resultDiv.textContent = "Tirage en cours...";
+            resultDiv.classList.add('show');
+
+            // --- LOGIQUE TRUQUÉE ---
+            // 55% de chance de tomber sur "Désolé" (Index 3)
+            // Pour tomber sur l'index 3 ("Désolé"), l'angle de rotation final de la roue
+            // doit être entre 72 et 144 degrés.
+            const isLoser = Math.random() < 0.55; 
+            let targetAngle;
+
+            if (isLoser) {
+                // On vise la zone de l'index 3 (rotation entre 72 et 144 deg)
+                targetAngle = Math.floor(Math.random() * (144 - 72)) + 72;
+            } else {
+                // On vise ailleurs (Gagnant)
+                do {
+                    targetAngle = Math.floor(Math.random() * 360);
+                } while (targetAngle > 72 && targetAngle < 144);
+            }
+
+            // Calcul de la rotation totale pour arriver exactement sur targetAngle
+            // On calcule la distance à parcourir depuis la position actuelle
+            const currentMod = currentRotation % 360;
+            let distance = targetAngle - currentMod;
+            if (distance < 0) distance += 360;
+
+            const extraSpins = 360 * 5; // 5 tours minimum
+            const totalRotation = currentRotation + extraSpins + distance;
+
+            // Appliquer la rotation CSS
+            wheel.style.transform = `rotate(${totalRotation}deg)`;
+            
+            // Mettre à jour la rotation actuelle pour le prochain tour
+            currentRotation = totalRotation;
+
+            // Attendre la fin de l'animation (4 secondes défini dans le CSS)
+            setTimeout(() => {
+                isSpinning = false;
+                calculateWinner(totalRotation);
+                
+                // 3. Enregistrement des données pour bloquer la prochaine fois
+                usedEmails.push(email);
+                usedPhones.push(phone);
+                localStorage.setItem('omp_emails', JSON.stringify(usedEmails));
+                localStorage.setItem('omp_phones', JSON.stringify(usedPhones));
+                
+                // Désactiver les champs
+                emailInput.disabled = true;
+                phoneInput.disabled = true;
+            }, 4000);
+        });
+
+        function calculateWinner(rotation) {
+            // Normaliser la rotation entre 0 et 360
+            const actualRotation = rotation % 360;
+            
+            // La flèche est en haut (0deg).
+            // Si la roue tourne de 30deg, le segment à 330deg (360-30) se retrouve sous la flèche.
+            const degreesFromTop = 360 - actualRotation;
+            
+            // Taille d'un segment
+            const segmentSize = 360 / 5; // 72 degrés
+            
+            // Calcul de l'index (0 à 4)
+            // L'index gagnant est déterminé par la position finale de la roue.
+            // L'ordre des segments correspond à l'ordre dans le HTML.
+            // 0: Moshi, 1: -10%, 2: Surprise, 3: Désolé !, 4: Cookie
+            const winningIndex = Math.floor(degreesFromTop / segmentSize);
+            
+            let prize = "";
+            switch(winningIndex) {
+                case 0: prize = "Moshi Offert"; break;
+                case 1: prize = "Remise -10%"; break;
+                case 2: prize = "Surprise"; break;
+                case 3: prize = "Perdu"; break;
+                case 4: prize = "Cookie Offert"; break;
+                default: prize = "Moshi Offert"; // Fallback
+            }
+
+            resultDiv.textContent = `Bravo : ${prize}`;
+            
+            // Petit effet confetti (optionnel, juste visuel ici via texte)
+            if(prize.includes("Perdu")) {
+                resultDiv.style.color = "#888";
+            } else {
+                resultDiv.style.color = "var(--secondary-pink)";
+            }
+        }
+    </script>
+</body>
+</html>
