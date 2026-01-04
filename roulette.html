@@ -5,21 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roue de la Fortune - Oh My Poke</title>
     <!-- Import d'une police "Florale/Manuscrite" -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Playfair+Display:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-pink: #be185d;
             --secondary-pink: #831843;
-            --light-pink: #fdf2f8;
-            --dark-pink: #500724;
+            --light-pink: #FFFFFF;
+            --dark-pink: #FC019E;
             --text-color: #333;
-            --gold: #d4af37;
+            --gold: #500724;
         }
 
         body {
             font-family: 'Montserrat', sans-serif;
             background-color: var(--light-pink);
-            background-image: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+            background-image: linear-gradient(135deg, #FFFFFF 0%, #FFFFFF 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -30,7 +30,7 @@
         }
 
         h1 {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Permanent Marker', cursive;
             color: var(--dark-pink);
             font-size: 3rem;
             margin-bottom: 20px;
@@ -70,6 +70,7 @@
             overflow: hidden;
             transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99); /* Effet de ralentissement réaliste */
             background: #fff;
+            box-sizing: border-box;
         }
 
         /* Les segments de la roue */
@@ -87,11 +88,12 @@
         }
 
         /* Couleurs alternées pour les pétales */
-        .segment:nth-child(1) { background-color: #9d174d; transform: rotate(0deg) skewY(-18deg); }
-        .segment:nth-child(2) { background-color: #be185d; transform: rotate(72deg) skewY(-18deg); }
-        .segment:nth-child(3) { background-color: #9d174d; transform: rotate(144deg) skewY(-18deg); }
-        .segment:nth-child(4) { background-color: #be185d; transform: rotate(216deg) skewY(-18deg); }
-        .segment:nth-child(5) { background-color: #831843; transform: rotate(288deg) skewY(-18deg); }
+        .segment:nth-child(1) { background-color: #BE185D; transform: rotate(0deg) skewY(-30deg); }
+        .segment:nth-child(2) { background-color: #FDC2D4; transform: rotate(60deg) skewY(-30deg); }
+        .segment:nth-child(3) { background-color: #D36087; transform: rotate(120deg) skewY(-30deg); }
+        .segment:nth-child(4) { background-color: #BE185D; transform: rotate(180deg) skewY(-30deg); }
+        .segment:nth-child(5) { background-color: #FDC2D4; transform: rotate(240deg) skewY(-30deg); }
+        .segment:nth-child(6) { background-color: #D36087; transform: rotate(300deg) skewY(-30deg); } /* Cookie en rouge */
 
         /* Le texte à l'intérieur des segments */
         .text {
@@ -101,7 +103,7 @@
             width: 100%;
             height: 100%;
             transform-origin: 0% 100%;
-            transform: skewY(18deg);
+            transform: skewY(30deg) rotate(-8deg);
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -115,33 +117,92 @@
             letter-spacing: 1px;
         }
 
-        /* Le bouton central (Pistil de la fleur) */
-        .spin-btn {
+        .text > span {
+            transform: rotate(-60deg);
+            display: inline-block;
+        }
+
+        /* Le bouton central (Pistil de la fleur - décoratif) */
+        .pistil {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             background: #fff;
             border-radius: 50%;
             border: 4px solid var(--gold);
-            cursor: pointer;
             z-index: 5;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Nouveau bouton d'action */
+        .play-btn {
+            margin-top: 50px;
+            padding: 15px 40px;
+            background-color: var(--primary-pink);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Permanent Marker', cursive;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(190, 24, 93, 0.3);
+            transition: transform 0.2s, background-color 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .play-btn:hover {
+            background-color: var(--secondary-pink);
+            transform: translateY(-2px);
+        }
+
+        .play-btn:active {
+            transform: translateY(1px);
+        }
+
+        .play-btn:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 140px;
+            z-index: 50;
+        }
+
+        /* Réseaux sociaux */
+        .social-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            color: var(--secondary-pink);
-            font-family: 'Playfair Display', serif;
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            gap: 15px;
+            margin-top: 40px;
+        }
+        
+        .social-icon {
+            width: 24px;
+            height: 24px;
+            fill: #BE185D;
             transition: transform 0.2s;
         }
+        
+        .social-icon:hover {
+            transform: scale(1.1);
+            fill: var(--primary-pink);
+        }
 
-        .spin-btn:active {
-            transform: translate(-50%, -50%) scale(0.95);
+        .social-handle {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            color: #BE185D;
+            font-size: 1rem;
         }
 
         /* Zone de résultat */
@@ -174,7 +235,6 @@
             z-index: -1;
             background: transparent;
             border-radius: 50%;
-            border: 1px solid var(--gold);
             opacity: 0.3;
             animation: spin-slow 60s linear infinite;
         }
@@ -189,7 +249,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 40px;
             z-index: 20;
         }
         
@@ -221,11 +281,12 @@
 </head>
 <body>
 
-    <h1>Oh My Poke</h1>
+    <img src="homypoke.jpg" alt="Logo Oh My Poke" class="logo">
+    <h1>tenter de gagner</h1>
 
     <div class="form-container">
-        <input type="email" id="emailInput" placeholder="Votre Email 📧">
-        <input type="tel" id="phoneInput" placeholder="Votre Téléphone 📱">
+        <input type="email" id="emailInput" placeholder="Votre Email ">
+        <input type="tel" id="phoneInput" placeholder="Votre Téléphone ">
     </div>
 
     <div class="wheel-container">
@@ -234,17 +295,30 @@
         
         <div class="wheel" id="wheel">
             <!-- 
-               Calcul des segments : 360deg / 5 segments = 72deg par segment.
+               Calcul des segments : 360deg / 6 segments = 60deg par segment.
                L'astuce CSS skewY est utilisée pour créer des parts de tarte parfaites.
             -->
-            <div class="segment"><span class="text">Moshi</span></div>
-            <div class="segment"><span class="text">-10%</span></div>
-            <div class="segment"><span class="text">Surprise</span></div>
-            <div class="segment"><span class="text">Désolé !</span></div>
-            <div class="segment"><span class="text">Cookie</span></div>
+            <div class="segment"><span class="text"><span>Moshi</span></span></div>
+            <div class="segment"><span class="text"><span>Perdu !</span></span></div>
+            <div class="segment"><span class="text"><span>-10%</span></span></div>
+            <div class="segment"><span class="text"><span>Surprise</span></span></div>
+            <div class="segment"><span class="text"><span>Perdu !</span></span></div>
+            <div class="segment"><span class="text"><span>Cookie</span></span></div>
         </div>
 
-        <button class="spin-btn" id="spinBtn">Spin</button>
+        <div class="pistil"></div>
+    </div>
+
+    <button class="play-btn" id="spinBtn">Je tente ma chance</button>
+
+    <div class="social-container">
+        <svg class="social-icon" viewBox="0 0 24 24">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>
+        <svg class="social-icon" viewBox="0 0 24 24">
+            <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.49-3.35-3.98-5.6-.54-2.44.05-4.99 1.51-6.94 1.17-1.57 2.85-2.76 4.74-3.24.43-.11 1.11-.08 1.11-.08v4.02c-.32.03-.64.19-.97.31-1.32.53-2.4 1.61-2.77 2.96-.49 1.84 1.05 4.37 3.19 4.5 1.43.09 2.8-.84 3.22-2.18.23-.73.25-1.5.25-2.26v-14.43z"/>
+        </svg>
+        <span class="social-handle">ohmypoke</span>
     </div>
 
     <div id="result">Bonne chance ! 🌸</div>
@@ -257,15 +331,16 @@
         const phoneInput = document.getElementById('phoneInput');
 
         // Les récompenses dans l'ordre inverse des aiguilles d'une montre (car la roue tourne en sens horaire)
-        // Ordre HTML : Moshi, -10%, Surprise, Désolé !, Cookie
-        // Correspondance Index : 0, 1, 2, 3, 4
+        // Ordre HTML : Moshi, Perdu, -10%, Surprise, Perdu, Cookie
+        // Correspondance Index : 0, 1, 2, 3, 4, 5
         // NOTE: Ce tableau n'est pas utilisé, mais une erreur de syntaxe ici bloquait le script.
         const segments = [
             "Moshi Offert", // Index 0
-            "Remise -10%",  // Index 1
-            "Surprise",     // Index 2
-            "Perdu",        // Index 3
-            "Cookie Offert" // Index 4
+            "Perdu",        // Index 1
+            "Remise -10%",  // Index 2
+            "Surprise",     // Index 3
+            "Perdu",        // Index 4
+            "Cookie Offert" // Index 5
         ];
         
         let currentRotation = 0;
@@ -311,20 +386,25 @@
             resultDiv.classList.add('show');
 
             // --- LOGIQUE TRUQUÉE ---
-            // 55% de chance de tomber sur "Désolé" (Index 3)
-            // Pour tomber sur l'index 3 ("Désolé"), l'angle de rotation final de la roue
-            // doit être entre 72 et 144 degrés.
+            // 55% de chance de tomber sur "Perdu" (Index 1 ou 4)
             const isLoser = Math.random() < 0.55; 
             let targetAngle;
 
             if (isLoser) {
-                // On vise la zone de l'index 3 (rotation entre 72 et 144 deg)
-                targetAngle = Math.floor(Math.random() * (144 - 72)) + 72;
+                // On vise la zone de l'index 1 (60-120) ou 4 (240-300)
+                if (Math.random() < 0.5) {
+                    targetAngle = Math.floor(Math.random() * (120 - 60)) + 60;
+                } else {
+                    targetAngle = Math.floor(Math.random() * (300 - 240)) + 240;
+                }
             } else {
                 // On vise ailleurs (Gagnant)
                 do {
                     targetAngle = Math.floor(Math.random() * 360);
-                } while (targetAngle > 72 && targetAngle < 144);
+                } while (
+                    (targetAngle > 60 && targetAngle < 120) || 
+                    (targetAngle > 240 && targetAngle < 300)
+                );
             }
 
             // Calcul de la rotation totale pour arriver exactement sur targetAngle
@@ -368,21 +448,22 @@
             const degreesFromTop = 360 - actualRotation;
             
             // Taille d'un segment
-            const segmentSize = 360 / 5; // 72 degrés
+            const segmentSize = 360 / 6; // 60 degrés
             
-            // Calcul de l'index (0 à 4)
+            // Calcul de l'index (0 à 5)
             // L'index gagnant est déterminé par la position finale de la roue.
             // L'ordre des segments correspond à l'ordre dans le HTML.
-            // 0: Moshi, 1: -10%, 2: Surprise, 3: Désolé !, 4: Cookie
+            // 0: Moshi, 1: Perdu, 2: -10%, 3: Surprise, 4: Perdu, 5: Cookie
             const winningIndex = Math.floor(degreesFromTop / segmentSize);
             
             let prize = "";
             switch(winningIndex) {
                 case 0: prize = "Moshi Offert"; break;
-                case 1: prize = "Remise -10%"; break;
-                case 2: prize = "Surprise"; break;
-                case 3: prize = "Perdu"; break;
-                case 4: prize = "Cookie Offert"; break;
+                case 1: prize = "Perdu"; break;
+                case 2: prize = "Remise -10%"; break;
+                case 3: prize = "Surprise"; break;
+                case 4: prize = "Perdu"; break;
+                case 5: prize = "Cookie Offert"; break;
                 default: prize = "Moshi Offert"; // Fallback
             }
 
